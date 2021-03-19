@@ -31,9 +31,10 @@ class TMapShow: UIView, TMapViewDelegate {
     var mapView: TMapView?
     var marker: TMapMarker?
     var markers: [TMapMarker] = []
+    var polylines: [TMapPolyline] = []
     let mPosition: CLLocationCoordinate2D = CLLocationCoordinate2D.init(latitude: 37.5723127, longitude: 126.9121494)
     let zoom = 16
-    let apiKey:String = "API_KEY_입력"
+    let apiKey:String = "SK_API_KEY"
     
     
     override init(frame: CGRect) {
@@ -69,8 +70,15 @@ class TMapShow: UIView, TMapViewDelegate {
         
         
         let pathData = TMapPathData()
+        
+        let startPoint = CLLocationCoordinate2D(latitude: 37.566567, longitude: 126.985038)
+        let endPoint = CLLocationCoordinate2D(latitude: 37.403049, longitude: 127.103318)
+        
+        
         pathData.requestFindNameAroundPOI(mPosition, categoryName:"EV충전소", radius: 100, count: 2) { (result, error)->Void in
                     if let result = result {
+                        print("TMapdata")
+                        print(result)
                         DispatchQueue.main.async {
                             for poi in result {
                                 let marker = TMapMarker(position: poi.coordinate!)
@@ -82,6 +90,31 @@ class TMapShow: UIView, TMapViewDelegate {
                         }
                     }
         }
+        
+        pathData.findPathData(startPoint: startPoint, endPoint: endPoint) { (result, error)->Void in
+                    if let polyline = result {
+                        print("polylinedata")
+                        print(polyline)
+                        DispatchQueue.main.async {
+                            let marker1 = TMapMarker(position: startPoint)
+                            marker1.map = self.mapView
+                            marker1.title = "출발지"
+                            self.markers.append(marker1)
+
+                            let marker2 = TMapMarker(position: endPoint)
+                            marker2.map = self.mapView
+                            marker2.title = "목적지"
+                            self.markers.append(marker2)
+
+                            polyline.map = self.mapView
+                            self.polylines.append(polyline)
+                            self.mapView?.fitMapBoundsWithPolylines(self.polylines)
+                        }
+                    }
+        }
+        
+        
+        
     }
     
     func setupView() {
