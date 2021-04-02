@@ -32,9 +32,9 @@ class TMapShow: UIView, TMapViewDelegate {
     var marker: TMapMarker?
     var markers: [TMapMarker] = []
     var polylines: [TMapPolyline] = []
-    let mPosition: CLLocationCoordinate2D = CLLocationCoordinate2D.init(latitude: 37.5723127, longitude: 126.9121494)
+    let mPosition: CLLocationCoordinate2D = CLLocationCoordinate2D.init(latitude: 37.50817611130608, longitude: 126.70910000504051)
     let zoom = 16
-    let apiKey:String = "SK_API_KEY"
+    let apiKey:String = "SK_APP_KEY"
     
     
     override init(frame: CGRect) {
@@ -71,8 +71,8 @@ class TMapShow: UIView, TMapViewDelegate {
         
         let pathData = TMapPathData()
         
-        let startPoint = CLLocationCoordinate2D(latitude: 37.566567, longitude: 126.985038)
-        let endPoint = CLLocationCoordinate2D(latitude: 37.403049, longitude: 127.103318)
+        let startPoint = CLLocationCoordinate2D(latitude: 37.508194, longitude: 126.709094)
+        let endPoint = CLLocationCoordinate2D(latitude: 37.516774, longitude: 126.715576)
         
         
         pathData.requestFindNameAroundPOI(mPosition, categoryName:"EV충전소", radius: 100, count: 2) { (result, error)->Void in
@@ -91,7 +91,7 @@ class TMapShow: UIView, TMapViewDelegate {
                     }
         }
         
-        pathData.findPathData(startPoint: startPoint, endPoint: endPoint) { (result, error)->Void in
+/*        pathData.findPathData(startPoint: startPoint, endPoint: endPoint) { (result, error)->Void in
                     if let polyline = result {
                         print("polylinedata")
                         print(polyline)
@@ -111,10 +111,23 @@ class TMapShow: UIView, TMapViewDelegate {
                             self.mapView?.fitMapBoundsWithPolylines(self.polylines)
                         }
                     }
-        }
+        } */
         
-        
-        
+        let position = CLLocationCoordinate2D(latitude: 37.50817611130608, longitude: 126.70910000504051)
+            var path = Array<CLLocationCoordinate2D>()
+            path.append(CLLocationCoordinate2D(latitude: position.latitude, longitude: position.longitude))
+            path.append(CLLocationCoordinate2D(latitude: 37.51718619018101, longitude: 126.70999133888743))
+/*            path.append(CLLocationCoordinate2D(latitude: position.latitude, longitude: position.longitude))
+            path.append(CLLocationCoordinate2D(latitude: position.latitude + 0.001, longitude: position.longitude + 0.0005))
+            path.append(CLLocationCoordinate2D(latitude: position.latitude - 0.001, longitude: position.longitude + 0.001))*/
+            
+            let polyline = TMapPolyline(coordinates: path)
+            
+            let polylinePath = polyline.path
+            
+        polyline.map = self.mapView
+        self.polylines.append(polyline)
+        self.mapView?.fitMapBoundsWithPolylines(self.polylines)
     }
     
     func setupView() {
